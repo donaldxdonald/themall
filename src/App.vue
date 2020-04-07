@@ -11,11 +11,12 @@ import mainTabBar from 'components/content/mainTabBar/MainTabBar.vue'
 export default {
   name: 'App',
   components: {
-    mainTabBar
+    mainTabBar,
   }
 }
 </script>
 
 <style>
+@import url('assets/css/base.css');
 
 </style>

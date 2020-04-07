@@ -4,23 +4,14 @@ function resolve(dir){
 }
 
 module.exports = {
-  // chainWebpack:(config)=>{
-  //   config.resolve.alias
-  //   //set第一个参数：设置的别名，第二个参数：设置的路径
-  //   .set('@',resolve('./src'))
-  //   .set('components',resolve('./src/components'))
-  //   .set('assets',resolve('./src/assets'))
-  //   .set('views',resolve('./src/views'))
-  //   .set('common',resolve('./src/common'))
-  //   //注意 store 和 router 没必要配置
-  // }
   configureWebpack: {
     resolve: {
       alias: {
         'assets': resolve('src/assets'),
         'common': resolve('src/common'),
         'components': resolve('src/components'),
-        'views': resolve('src/views')
+        'views': resolve('src/views'),
+        'network': resolve('src/network')
       }
     }
   }

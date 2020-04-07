@@ -42,6 +42,8 @@ export default {
 <style>
 h2 {
   padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 </style>

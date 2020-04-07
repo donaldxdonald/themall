@@ -27,18 +27,15 @@ export default {
 
 <style>
 
-.tab-bar-item img {
-  width: 20px;
-  height: 20px;
-  margin-top: 6px;
-  margin-bottom: 2px;
-  vertical-align: middle;
-}
-
 .tab-bar-item {
   flex: 1;
   text-align: center;
-  height: 49px;
+  height: 70%;
+}
+
+.tab-bar-item img {
+  width: 23%;
+  padding-top: 5%;
 }
 
 .tab-bar-item span {
