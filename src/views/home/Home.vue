@@ -1,13 +1,15 @@
 <template>
   <div id="home">
-    <nav-bar class="home-nav">
-      <h3 slot="center">购物街</h3>
-    </nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
-    <recommend-view :recommends="recommends"></recommend-view>
-    <feature></feature>
-    <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
-    <goods-list :goods="showGoods"></goods-list>
+      <nav-bar class="home-nav">
+        <h3 slot="center">购物街</h3>
+      </nav-bar>
+      <scroll class="content">
+        <home-swiper :banners="banners"></home-swiper>
+        <recommend-view :recommends="recommends"></recommend-view>
+        <feature></feature>
+        <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+        <goods-list :goods="showGoods"></goods-list>
+      </scroll>
   </div>
 </template>
 
@@ -17,6 +19,7 @@ import RecommendView from './childComps/RecommendView'
 import Feature from './childComps/Feature'
 
 import NavBar from 'components/common/navbar/NavBar.vue'
+import Scroll from 'components/common/scroll/Scroll.vue'
 import TabControl from 'components/content/tabControl/TabControl.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue'
 
@@ -29,6 +32,7 @@ export default {
     RecommendView,
     Feature,
     NavBar,
+    Scroll,
     TabControl,
     GoodsList
   },
@@ -99,13 +103,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #home {
-    margin-bottom: 5000px;
+    margin-bottom: 100px;
   }
 
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
+  }
+
+  .content {
+    height: calc(100vh - 6.5rem);
   }
 </style>
