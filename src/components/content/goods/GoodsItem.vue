@@ -1,7 +1,7 @@
 <template>
   <div class="goods-item">
     <a :href="gdetails.clientUrl">
-      <img :src="gdetails.show.img" alt="">
+      <img :src="gdetails.show.img" @load="imgLoaded">
       <div class="goods-info">
         <p class="goods-item-title">{{gdetails.title}}</p>
         <span class="price">￥{{gdetails.price}}</span>
@@ -20,6 +20,11 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  methods: {
+    imgLoaded() {
+      this.$bus.$emit('imgLoaded')
     }
   }
 

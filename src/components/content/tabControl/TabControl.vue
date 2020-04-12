@@ -41,20 +41,19 @@ export default {
     background-color: #fff;
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    line-height: 40px;
-    position: sticky;
+    height: 46px;
+    line-height: 46px;
     top: 3.5rem;
     z-index: 1;
   }
 
   .tab-control-item {
     flex: 1;
-    padding: 5px;
+    
   }
 
   .tab-control-item span {
-    padding: 6px 8px;
+    padding: 3px 8px;
   }
 
   .active {
