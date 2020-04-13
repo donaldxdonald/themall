@@ -36,7 +36,7 @@ import GoodsList from 'components/content/goods/GoodsList.vue'
 import BackTop from 'components/content/backTop/BackTop.vue'
 
 import {getHomeMultidata, getHomeGoods} from 'network/home.js'
-import {denounce} from 'assets/js/common/utils.js'
+import {debounce} from 'common/utils.js'
 
 export default {
   name: 'Home',
@@ -54,7 +54,6 @@ export default {
     return {
       banners: [],
       recommends: [],
-      alldata: null,
       goods: {
         'pop':{page: 0, list: []},
         'new':{page: 0, list: []},
@@ -81,8 +80,6 @@ export default {
 
   mounted() {
     this.imgLoaded()
-    
-    
   },
 
   activated() {
@@ -146,7 +143,7 @@ export default {
 
     refresh() {
       const refresh = this.$refs.scroll.refresh()
-      denounce(refresh, 1000)
+      debounce(refresh, 1000)
     },
 
     
@@ -158,7 +155,6 @@ export default {
       getHomeMultidata().then(res => {
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list
-        this.alldata = res.data
       })
     },
     getHomeGoods(type) {

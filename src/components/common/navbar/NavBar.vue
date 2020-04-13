@@ -18,7 +18,7 @@ export default {
   height: 3.5rem;
   line-height: 3.5rem;
   box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-  position: fixed;
+  position: relative;
   left: 0;
   right: 0;
   top: 0;
@@ -27,6 +27,7 @@ export default {
 
 .left, .right {
   width: 60px;
+  text-align: center;
 }
 
 .center {

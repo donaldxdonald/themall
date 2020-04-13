@@ -1,13 +1,11 @@
 <template>
-  <div class="goods-item">
-    <a :href="gdetails.clientUrl">
+  <div class="goods-item" @click="itemClick">
       <img :src="gdetails.show.img" @load="imgLoaded">
       <div class="goods-info">
         <p class="goods-item-title">{{gdetails.title}}</p>
         <span class="price">￥{{gdetails.price}}</span>
         <span class="fav">⭐{{gdetails.cfav}}</span>
       </div>
-    </a>
   </div>
 </template>
 
@@ -25,6 +23,9 @@ export default {
   methods: {
     imgLoaded() {
       this.$bus.$emit('imgLoaded')
+    },
+    itemClick() {
+      this.$router.push('detail/' + this.gdetails.iid)
     }
   }
 
