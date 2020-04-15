@@ -6,7 +6,7 @@
         <div v-for="(item, index) in titiles " 
               :key="index"
               :class="{active: currentIndex == index}"
-              @click="getIndex(index)">
+              @click="itemClick(index)">
           <span>{{item}}</span>
         </div>
       </div>
@@ -24,8 +24,8 @@ export default {
   },
   data () {
     return {
-      titiles: ['商品', '参数', '评论', '推荐'],
-      currentIndex: 0
+      currentIndex: 0,
+      titiles: ['商品', '参数', '评论', '推荐']
     }
   },
   activated() {
@@ -39,8 +39,9 @@ export default {
       this.$router.back()
     },
 
-    getIndex(index) {
+    itemClick(index) {
       this.currentIndex = index
+      this.$emit('detailNavClick', index)
     }
   }
 }

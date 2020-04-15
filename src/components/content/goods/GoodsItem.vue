@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-      <img :src="gdetails.show.img" @load="imgLoaded">
+      <img :src="showImgs" @load="imgLoaded">
       <div class="goods-info">
         <p class="goods-item-title">{{gdetails.title}}</p>
         <span class="price">￥{{gdetails.price}}</span>
@@ -18,6 +18,11 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  computed: {
+    showImgs() {
+      return this.gdetails.image || this.gdetails.show.img
     }
   },
   methods: {

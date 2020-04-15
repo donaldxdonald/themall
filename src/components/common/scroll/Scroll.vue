@@ -39,7 +39,7 @@ export default {
       
 
       this.bs.on('scroll', position => {
-        this.$emit('showTopBtn', position)
+        this.$emit('scrollPosition', position)
       })
 
       this.bs.on('pullingUp', () => {
@@ -53,6 +53,7 @@ export default {
     },
 
     refresh() {
+      console.log('刷新啦')
       this.bs && this.bs.refresh()
     },
 

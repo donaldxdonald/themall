@@ -10,7 +10,7 @@
                           class="tab-control1"></tab-control>
       <scroll class="content" 
                   ref="scroll" 
-                  @showTopBtn="showTopBtn"
+                  @scrollPosition="showTopBtn"
                   @pullingUp="loadMore"
                   :probeType="3"
                   :pullUpLoad="true">
@@ -62,7 +62,8 @@ export default {
       currentType: 'pop',
       isShowTopBtn: false,
       isShowTabCtrl1: false,
-      saveY: 0
+      saveY: 0,
+      itemImgListener: null
     }
   },
   computed: {
@@ -79,7 +80,7 @@ export default {
   },
 
   mounted() {
-    this.imgLoaded()
+    this.refresh()
   },
 
   activated() {
@@ -89,6 +90,8 @@ export default {
 
   deactivated () {
     this.saveY = this.$refs.scroll.getScrollY()
+    // 取消全局事件的监听
+    this.$bus.$off('imgLoaded', this.itemImgListener)
   },
   methods: {
     
@@ -134,16 +137,13 @@ export default {
     
 
     // 监听图片加载完成后刷新better-scroll的内容高度
-    imgLoaded() {
-      this.$bus.$on('imgLoaded', () => {
-        this.refresh()
-      })
-
-    },
-
     refresh() {
-      const refresh = this.$refs.scroll.refresh()
-      debounce(refresh, 1000)
+      let newRefresh = debounce(this.$refs.scroll.refresh)
+      // 对监听的事件进行保存
+      this.itemImgListener = () => {
+        newRefresh()
+      }
+      this.$bus.$on('imgLoaded', this.itemImgListener)
     },
 
     
