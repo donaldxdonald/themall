@@ -10,7 +10,7 @@
                           class="tab-control1"></tab-control>
       <scroll class="content" 
                   ref="scroll" 
-                  @scrollPosition="showTopBtn"
+                  @scrollPosition="getPosition"
                   @pullingUp="loadMore"
                   :probeType="3"
                   :pullUpLoad="true">
@@ -18,7 +18,7 @@
         <recommend-view :recommends="recommends"></recommend-view>
         <feature></feature>
         <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControl2"></tab-control>
-        <goods-list :goods="showGoods"></goods-list>
+        <goods-list :goods="showGoods" ref="goods"></goods-list>
       </scroll>
       <back-top @click.native="topClick" class="back-top" v-show="isShowTopBtn"/>
   </div>
@@ -33,10 +33,10 @@ import NavBar from 'components/common/navbar/NavBar.vue'
 import Scroll from 'components/common/scroll/Scroll.vue'
 import TabControl from 'components/content/tabControl/TabControl.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue'
-import BackTop from 'components/content/backTop/BackTop.vue'
 
 import {getHomeMultidata, getHomeGoods} from 'network/home.js'
 import {debounce} from 'common/utils.js'
+import {itemImgListener, backTopMixin} from 'common/mixin.js'
 
 export default {
   name: 'Home',
@@ -48,7 +48,6 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTop
   },
   data () {
     return {
@@ -60,10 +59,8 @@ export default {
         'sell':{page: 0, list: []},
       },
       currentType: 'pop',
-      isShowTopBtn: false,
       isShowTabCtrl1: false,
       saveY: 0,
-      itemImgListener: null
     }
   },
   computed: {
@@ -78,11 +75,9 @@ export default {
     this.getHomeGoods('sell');
 
   },
-
   mounted() {
-    this.refresh()
   },
-
+  mixins: [itemImgListener, backTopMixin],
   activated() {
     this.$refs.scroll.refresh()
     this.$refs.scroll.scrollTo(0, this.saveY, 0)
@@ -115,38 +110,21 @@ export default {
       this.$refs.tabControl2.currentIndex = index
     },
 
-    topClick() {
-      this.$refs.scroll.scrollTo(0,0, 1000)
-    },
-
     loadMore() {
       this.getHomeGoods(this.currentType)
       this.$refs.scroll.finishPullUp()
     },
 
-    showTopBtn(position) {
-      this.isShowTopBtn =  position.y <= -600
-
+    getPosition(position) {
+      // 在特定区域显示置顶按钮
+      this.isShowTopBtn =  position.y <= -this.$refs.goods.$el.offsetTop
+      // 显示另一个tabcontrol
       this.isShowTabCtrl1 = (-position.y) >= this.getHomeOffsetTop()
     },
 
     getHomeOffsetTop() {
       return this.$refs.tabControl2.$el.offsetTop
     },
-
-    
-
-    // 监听图片加载完成后刷新better-scroll的内容高度
-    refresh() {
-      let newRefresh = debounce(this.$refs.scroll.refresh)
-      // 对监听的事件进行保存
-      this.itemImgListener = () => {
-        newRefresh()
-      }
-      this.$bus.$on('imgLoaded', this.itemImgListener)
-    },
-
-    
 
     /**
      * 网络请求相关

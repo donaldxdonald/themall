@@ -3,7 +3,7 @@
     <nav-bar class="detail-nav-bar">
       <img src="~assets/img/common/back.svg" slot="left" @click="backClick" alt="">
       <div class="detail-nav-center" slot="center">
-        <div v-for="(item, index) in titiles " 
+        <div v-for="(item, index) in titles " 
               :key="index"
               :class="{active: currentIndex == index}"
               @click="itemClick(index)">
@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       currentIndex: 0,
-      titiles: ['商品', '参数', '评论', '推荐']
+      titles: ['商品', '参数', '评论', '推荐']
     }
   },
   activated() {

@@ -53,7 +53,7 @@ export default {
     },
 
     refresh() {
-      console.log('刷新啦')
+      // console.log('刷新啦')
       this.bs && this.bs.refresh()
     },
 

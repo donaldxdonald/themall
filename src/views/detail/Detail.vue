@@ -1,9 +1,9 @@
 <template>
   <div id="detail">
-    <detail-nav-bar @detailNavClick="navClick"/>
+    <detail-nav-bar @detailNavClick="navClick" ref="nav"/>
     <scroll class="content"
               ref="scroll"
-              @scrollPosition="showTopBtn"
+              @scrollPosition="getPosition"
               :probeType="3">
       <detail-swiper :swiperImgs="swiperImgs"/>
       <detail-base-info :goods="goods" :shop="shop"/>
@@ -13,6 +13,7 @@
       <detail-goods-info :detailInfo="detailInfo" />
       <goods-list :goods="recommends" ref="recommend"/>
     </scroll>
+    <detail-bottom-bar @addCart="addToCart"/>
     <back-top @click.native="topClick" class="back-top" v-show="isShowTopBtn"/>
   </div>
 </template>
@@ -25,14 +26,15 @@ import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
+import DetailBottomBar from './childComps/DetailBottomBar'
 
 import GoodsList from 'components/content/goods/GoodsList.vue'
 
 import Scroll from 'components/common/scroll/Scroll.vue'
-import BackTop from 'components/content/backTop/BackTop.vue'
 
 import {getDetails, Goods, Shop, GoodsParam, getRecommend} from 'network/detail.js'
 import {debounce} from 'common/utils.js'
+import {itemImgListener, backTopMixin} from 'common/mixin.js'
 
 export default {
   name: "Detail",
@@ -49,8 +51,7 @@ export default {
       recommends: [],
       navTabY: [],
       getNavTabY: null,
-      isShowTopBtn: false,
-      itemImgListener: null
+      currentIndex: 0
     }
   },
   
@@ -67,19 +68,18 @@ export default {
     this.getNavTabY = debounce(() => {
       this.navTabY = []
       this.navTabY.push(0)
-      this.navTabY.push(this.$refs.params.$el.offsetTop - 56)
-      this.navTabY.push(this.$refs.comment.$el.offsetTop  - 56)
-      this.navTabY.push(this.$refs.recommend.$el.offsetTop  - 56)
-      // 减去导航栏的高度
-      console.log(this.navTabY)
+      this.navTabY.push(this.$refs.params.$el.offsetTop)
+      this.navTabY.push(this.$refs.comment.$el.offsetTop)
+      this.navTabY.push(this.$refs.recommend.$el.offsetTop)
+      this.navTabY.push(Number.MAX_VALUE)//优化方法的一部分
     })
 
     
   },
-  mounted () {
-    this.refresh()
-    
+  updated () {
+    this.getNavTabY()
   },
+  mixins: [itemImgListener, backTopMixin],
   components: {
     DetailNavBar,
     DetailSwiper,
@@ -90,7 +90,7 @@ export default {
     DetailCommentInfo,
     GoodsList,
     Scroll,
-    BackTop
+    DetailBottomBar,
   },
   methods: {
     /**
@@ -115,6 +115,8 @@ export default {
         if (data.rate.cRate !== 0) {
           this.commentInfo = data.rate.list[0]
         }
+        
+        
     })
     },
     // 二、获取推荐数据
@@ -127,32 +129,47 @@ export default {
     /**
    * 监听相关
    */
-    refresh() {
-      let newRefresh = debounce(this.$refs.scroll.refresh)
-      
-      this.itemImgListener = () => {
-        newRefresh()
-        this.getNavTabY()
-      }
-      
-      this.$bus.$on('imgLoaded', this.itemImgListener)
-      
-    },
-    topClick() {
-      this.$refs.scroll.scrollTo(0,0, 1000)
-    },
-    showTopBtn(position) {
-      // console.log(position)
-      this.isShowTopBtn =  position.y <= -800
+    getPosition(position) {
+      let positionY = position.y
+      // 在特定区域显示置顶按钮
+      this.isShowTopBtn =  positionY <= -this.navTabY[1]
 
+      // 判断位置返回相应的导航栏标签
+      // ↓普通做法
+      // for (let i = 0; i < this.navTabY.length; i++ ) {
+      //   if (i !== this.currentIndex && ((-positionY >= this.navTabY[i] && -positionY < this.navTabY[i+1]) || (i === this.navTabY.length - 1 && -positionY >= this.navTabY[i]))) {
+      //     this.currentIndex = i
+      //   }
+      // }
+      
+      // ↓优化做法  增加navTabY的最后一个值, 少一个判断
+      for (let i = 0; i < this.navTabY.length-1; ++i ) {
+        if (i !== this.currentIndex && (-positionY >= this.navTabY[i] && -positionY < this.navTabY[i+1])) {
+          this.currentIndex = i
+        }
+      }
+      this.$refs.nav.currentIndex = this.currentIndex
     },
 
     navClick(index) {
       // 设定导航栏各个标签对应的位置
-      console.log('我点了')
       this.$refs.scroll.scrollTo(0, -this.navTabY[index])
-     }
+    },
+    
+
+    addToCart() {
+      const product = {}
+      // 1.获取购物车需要展示的信息
+      product.image = this.swiperImgs[0]
+      product.title = this.goods.title
+      product.desc = this.goods.desc
+      product.price = this.goods.realPrice
+      product.iid = this.iid
+
+      // 2.将商品添加到购物车里
+      this.$store.dispatch('addCart',product)
     }
+  }
 }
 </script>
 
@@ -165,6 +182,6 @@ export default {
   }
 
   .content {
-    height: calc(100vh - 3.5rem);
+    height: calc(100vh - 7rem);
   }
 </style>
