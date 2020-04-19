@@ -1,7 +1,7 @@
 <template>
-  <div class="cart-list-item">
+  <div class="cart-list-item" :class="{selected: product.checked}">
     <div class="item-selector">
-      <check-button />
+      <check-button v-model="product.checked" @click.native="boxChecked"/>
     </div>
     <div class="item-img">
       <img :src="product.image" alt="商品图片">
@@ -10,8 +10,12 @@
       <div class="item-title">{{product.title}}</div>
       <div class="item-desc">商品描述: {{product.desc}}</div>
       <div class="info-bottom">
-        <div class="item-price left">￥{{product.price * product.count}}</div>
-        <div class="item-count right">x{{product.count}}</div>
+        <div class="item-price left">{{productPrice}}</div>
+        <div class="item-count right">
+          <button @click="minusCount" :disabled="product.count == 1">-</button>
+          <span>{{product.count}}</span>
+          <button @click="addCount">+</button>
+        </div>
       </div>
     </div>
   </div>
@@ -19,6 +23,8 @@
 
 <script>
 import CheckButton from 'components/content/checkButton/CheckButton.vue'
+
+import {ADD_COUNT, MINUS_COUNT,  BOX_CHECKED} from '../../../store/mutations_types'
 
 export default {
   name: "CartListItem",
@@ -30,18 +36,45 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      isChecked: false
+    }
+  },
+  computed: {
+    productPrice() {
+      return '￥' + (this.product.price * this.product.count).toFixed(2)
+    }
+  },
   components: {
     CheckButton
+  },
+  methods: {
+    boxChecked() {
+      this.isChecked = !this.isChecked
+      this.$store.commit(BOX_CHECKED, this.product)
+    },
+    addCount() {
+      this.$store.commit(ADD_COUNT, this.product)
+    },
+    minusCount() {
+      this.$store.commit(MINUS_COUNT, this.product)
+    }
   }
 }
 </script>
 
 <style scoped>
   .cart-list-item {
-    margin: 5px 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
     width: 100%;
     display: flex;
     border-bottom: 1px solid #ccc;
+  }
+
+  .selected {
+    background-color: #eee;
   }
 
   .item-selector {
@@ -91,7 +124,19 @@ export default {
     bottom: 10px;
   }
 
+  .info-bottom .item-count {
+    display: flex;
+    width: 30%;
+    justify-content: space-evenly;
+  }
+
   .info-bottom .item-price {
     color: orangered;
+  }
+
+  .info-bottom button {
+    width: 20px;
+    height: 20px;
+    
   }
 </style>

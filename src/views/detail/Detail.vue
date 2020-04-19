@@ -167,7 +167,9 @@ export default {
       product.iid = this.iid
 
       // 2.将商品添加到购物车里
-      this.$store.dispatch('addCart',product)
+      this.$store.dispatch('addCart',product).then(res => {
+        this.$toast.show(res)
+      })
     }
   }
 }

@@ -4,11 +4,13 @@
       <h3 slot="center">购物车({{goodsCount}})</h3>
     </nav-bar>
     <cart-list class="cart-list"/>
+    <cart-bottom-bar/>
   </div>
 </template>
 
 <script>
 import CartList from './childComps/CartList'
+import CartBottomBar from './childComps/CartBottomBar'
 
 import NavBar from 'components/common/navbar/NavBar.vue'
 
@@ -18,7 +20,8 @@ export default {
   name: 'Cart',
   components: {
     CartList,
-    NavBar
+    CartBottomBar,
+    NavBar,
   },
   data () {
     return {
